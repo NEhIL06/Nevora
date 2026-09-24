@@ -23,6 +23,10 @@ export interface Product {
   highlights: string[];
   ingredients: string[];
   nutrition?: NutritionFacts;
+  price?: number;
+  originalPrice?: number;
+  rating?: number;
+  reviewsCount?: number;
 }
 
 export const BRAND_INFO = {
@@ -469,3 +473,121 @@ export const PRODUCTS: Product[] = [
     nutrition: COMMON_SNACK_NUTRITION,
   },
 ];
+
+export function getProductPricing(product: Product) {
+  if (product.price && product.originalPrice) {
+    const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+    return {
+      price: product.price,
+      originalPrice: product.originalPrice,
+      discountText: `${discount}% OFF`,
+      savings: product.originalPrice - product.price,
+    };
+  }
+  // Default tiered pricing by category and weight
+  if (product.category === 'spices') {
+    const isHaldi = product.id.includes('haldi');
+    const price = isHaldi ? 129 : 149;
+    const originalPrice = isHaldi ? 160 : 185;
+    const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+    return {
+      price,
+      originalPrice,
+      discountText: `${discount}% OFF`,
+      savings: originalPrice - price,
+    };
+  }
+  // Snacks default pricing
+  const isChakliOrBhujiya = product.snackType === 'chakli' || product.snackType === 'bhujiya';
+  const price = isChakliOrBhujiya ? 89 : 79;
+  const originalPrice = isChakliOrBhujiya ? 110 : 99;
+  const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+  return {
+    price,
+    originalPrice,
+    discountText: `${discount}% OFF`,
+    savings: originalPrice - price,
+  };
+}
+
+export function getProductRating(product: Product) {
+  // Deterministic ratings between 4.8 and 5.0
+  const charSum = product.name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const rating = 4.8 + ((charSum % 3) * 0.1);
+  const count = 85 + (charSum % 145);
+  return {
+    rating: Number(rating.toFixed(1)),
+    count,
+  };
+}
+
+export interface CuratedCombo {
+  id: string;
+  title: string;
+  subtitle: string;
+  tag: string;
+  itemsCount: string;
+  price: number;
+  originalPrice: number;
+  discount: string;
+  image: string;
+  items: string[];
+  description: string;
+}
+
+export const CURATED_COMBOS: CuratedCombo[] = [
+  {
+    id: 'bestseller-snack-pack-4',
+    title: 'Millet Crunch Bestseller Box',
+    subtitle: 'Ragi Chakli + Sticks + Chips + Bhujiya',
+    tag: '⚡ POPULAR VALUE PACK',
+    itemsCount: '4 Full Packs (460g)',
+    price: 299,
+    originalPrice: 380,
+    discount: '21% OFF',
+    image: '/images/snacks/chakli-classic.jpg',
+    items: [
+      'Ragi Chakli Classic (130g)',
+      'Ragi Sticks Masala (100g)',
+      'Ragi Chips Peri Peri (100g)',
+      'Ragi Bhujiya Tangy Tomato (130g)',
+    ],
+    description: 'Our four most-loved millet innovations bundled together. Perfect for family snacking with zero maida and zero palm oil.',
+  },
+  {
+    id: 'flavor-fiesta-sampler',
+    title: 'All-Flavors Tasting Sampler',
+    subtitle: 'Classic Salted + Peri Peri + Tomato + Masala',
+    tag: '🌶️ FLAVOR ADVENTURE',
+    itemsCount: '4 Varied Flavors (430g)',
+    price: 319,
+    originalPrice: 399,
+    discount: '20% OFF',
+    image: '/images/snacks/chips-periperi.jpg',
+    items: [
+      'Ragi Chips (Fiery Peri Peri)',
+      'Ragi Sticks (Tangy Tomato)',
+      'Ragi Mixture (Desi Masala)',
+      'Ragi Chakli (Classic Authentic)',
+    ],
+    description: 'Cannot decide on a favorite? Experience every dimension of Nevora crunch from soothing classic sea-salt to fiery peri peri punch.',
+  },
+  {
+    id: 'heritage-spice-trio',
+    title: 'Low RPM Stone-Ground Spice Trio',
+    subtitle: 'Kutta Mirchi + Kutta Haldi + Kutta Dhaniya',
+    tag: '🌿 FARM TO KITCHEN',
+    itemsCount: '3 Heritage Spices (440g)',
+    price: 369,
+    originalPrice: 455,
+    discount: '19% OFF',
+    image: '/images/masala/kutta-mirchi.png',
+    items: [
+      'Kutta Mirchi Coarse Chilli (130g)',
+      'Kutta Haldi High-Curcumin Turmeric (180g)',
+      'Kutta Dhaniya Aromatic Coriander (130g)',
+    ],
+    description: 'Slow cold-pounded at low RPM so the pure volatile oils and fragrances stay locked in the powder. Transform everyday cooking into culinary royalty.',
+  },
+];
+

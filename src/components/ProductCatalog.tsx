@@ -1,34 +1,48 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { PRODUCTS, Product } from '@/data/products';
+import { PRODUCTS, Product, CURATED_COMBOS, BRAND_INFO } from '@/data/products';
 import ProductCard from './ProductCard';
 import ProductDetailModal from './ProductDetailModal';
-import { Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
+import { Search, SlidersHorizontal, Sparkles, X, Gift, Check, MessageCircle, Flame } from 'lucide-react';
+
+const CATEGORY_TABS = [
+  { id: 'all', label: 'All Products', icon: '✨', count: 23 },
+  { id: 'chakli', label: 'Millet Chakli', icon: '🥨', count: 4 },
+  { id: 'sticks', label: 'Crunchy Sticks', icon: '🥢', count: 4 },
+  { id: 'chips', label: 'Wafer Chips', icon: '🍟', count: 4 },
+  { id: 'mixture', label: 'Desi Mixture', icon: '🥣', count: 4 },
+  { id: 'bhujiya', label: 'Fine Bhujiya', icon: '🍜', count: 4 },
+  { id: 'spices', label: 'Low RPM Spices', icon: '🌶️', count: 3 },
+];
+
+const FLAVORS = [
+  { id: 'all', label: 'All Flavors', dot: 'bg-gray-400' },
+  { id: 'classic', label: 'Classic Authentic', dot: 'bg-emerald-500' },
+  { id: 'periperi', label: 'Peri Peri Fiery', dot: 'bg-orange-500' },
+  { id: 'tomato', label: 'Tangy Tomato', dot: 'bg-red-500' },
+  { id: 'masala', label: 'Desi Masala', dot: 'bg-amber-600' },
+];
 
 export default function ProductCatalog() {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'snacks' | 'spices'>('all');
-  const [selectedFlavor, setSelectedFlavor] = useState<string>('all');
-  const [selectedSnackType, setSelectedSnackType] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [activeTab, setActiveTab] = useState('all');
+  const [selectedFlavor, setSelectedFlavor] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
 
   // Filter logic
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((p) => {
-      // Category filter
-      if (selectedCategory !== 'all' && p.category !== selectedCategory) {
-        return false;
+      // Category / Tab filter
+      if (activeTab === 'spices') {
+        if (p.category !== 'spices') return false;
+      } else if (activeTab !== 'all') {
+        if (p.category !== 'snacks' || p.snackType !== activeTab) return false;
       }
 
-      // Flavor filter (only relevant for snacks)
-      if (selectedCategory !== 'spices' && selectedFlavor !== 'all') {
+      // Flavor filter (applies to snacks)
+      if (p.category === 'snacks' && selectedFlavor !== 'all') {
         if (p.flavor !== selectedFlavor) return false;
-      }
-
-      // Snack type filter
-      if (selectedCategory !== 'spices' && selectedSnackType !== 'all') {
-        if (p.snackType !== selectedSnackType) return false;
       }
 
       // Search query filter
@@ -46,97 +60,213 @@ export default function ProductCatalog() {
 
       return true;
     });
-  }, [selectedCategory, selectedFlavor, selectedSnackType, searchQuery]);
+  }, [activeTab, selectedFlavor, searchQuery]);
+
+  const hasActiveFilters = activeTab !== 'all' || selectedFlavor !== 'all' || searchQuery.trim() !== '';
 
   const resetFilters = () => {
-    setSelectedCategory('all');
+    setActiveTab('all');
     setSelectedFlavor('all');
-    setSelectedSnackType('all');
     setSearchQuery('');
   };
 
-  const hasActiveFilters =
-    selectedCategory !== 'all' ||
-    selectedFlavor !== 'all' ||
-    selectedSnackType !== 'all' ||
-    searchQuery.trim() !== '';
-
   return (
-    <section id="products" className="py-16 sm:py-24 bg-[#fdfbf7]">
+    <section id="products" className="py-16 sm:py-24 bg-[#FFFDF9]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f4ede1] text-[#a77826] text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Curated Product Range</span>
+        
+        {/* Curated Combos Banner Section (Snackible Inspired) */}
+        <div id="combos" className="mb-20">
+          <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-black uppercase tracking-wider">
+              <Gift className="w-3.5 h-3.5 text-[#D97706]" />
+              <span>Snackible-Style Curated Value Packs</span>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#0E2118]">
+              Snack Combos & Gift Boxes
+            </h2>
+            <p className="text-sm text-[#4B5563]">
+              Can’t decide on just one? Save up to 21% with our crowd-favorite snacking bundles.
+            </p>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#142a1a]">
-            Explore All 23 Handcrafted Products
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {CURATED_COMBOS.map((combo) => {
+              const comboMsg = encodeURIComponent(
+                `Hi Nevora! I want to order the "${combo.title}" (${combo.itemsCount}) for ₹${combo.price}. Please share payment details!`
+              );
+
+              return (
+                <div
+                  key={combo.id}
+                  className="bg-white rounded-3xl border-2 border-amber-200/80 p-5 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                >
+                  <div className="space-y-4">
+                    {/* Top Tag & Discount */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full bg-amber-500 text-white">
+                        {combo.tag}
+                      </span>
+                      <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                        {combo.discount}
+                      </span>
+                    </div>
+
+                    {/* Visual */}
+                    <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-gradient-to-b from-amber-50 to-orange-50/40">
+                      <img
+                        src={combo.image}
+                        alt={combo.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-xs text-white text-[11px] font-bold px-2.5 py-0.5 rounded-md">
+                        {combo.itemsCount}
+                      </div>
+                    </div>
+
+                    {/* Titles */}
+                    <div>
+                      <h3 className="font-serif text-xl font-bold text-[#0E2118] group-hover:text-[#D97706] transition-colors">
+                        {combo.title}
+                      </h3>
+                      <p className="text-xs font-semibold text-[#D97706] mt-0.5">
+                        {combo.subtitle}
+                      </p>
+                      <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed">
+                        {combo.description}
+                      </p>
+                    </div>
+
+                    {/* Items checklist */}
+                    <div className="space-y-1.5 pt-2 border-t border-amber-100">
+                      {combo.items.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-[#374151] font-medium">
+                          <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Price & CTA */}
+                  <div className="pt-5 mt-4 border-t border-amber-100 flex items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-2xl font-black text-[#0E2118]">
+                          ₹{combo.price}
+                        </span>
+                        <span className="text-xs font-bold text-[#9CA3AF] line-through">
+                          ₹{combo.originalPrice}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-emerald-700 font-bold">Pan-India WhatsApp Delivery</span>
+                    </div>
+
+                    <a
+                      href={`${BRAND_INFO.whatsappBaseUrl}?text=${comboMsg}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#164A40] hover:bg-[#0E2118] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all"
+                    >
+                      <MessageCircle className="w-4 h-4 text-emerald-400" />
+                      <span>Order Box</span>
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Section Heading for All Products */}
+        <div className="text-center max-w-3xl mx-auto space-y-3 mb-10">
+          {/* <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold uppercase tracking-wider border border-emerald-200">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Clean-Label Snacking & Purity Spices</span>
+          </div> */}
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-[#0E2118]">
+            Explore The Full Nevora Pantry
           </h2>
-          <p className="text-sm sm:text-base text-[#516154] leading-relaxed">
-            From nutrient-rich crunchy finger millet (Ragi) snacks across 4 tempting flavors,
-            to stone-style low RPM coarse spices directly from Indian farms.
+          <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed">
+            100% Finger Millet snacks crafted with zero maida and cold-pressed oils, paired with slow cold-pounded heritage spices.
           </p>
         </div>
 
-        {/* Controls Container */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 brand-shadow border border-[#eee6d6] mb-10 space-y-5">
-          {/* Main Category Filter Tabs */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#eee6d6] pb-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => {
-                  setSelectedCategory('all');
-                  setSelectedFlavor('all');
-                }}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                  selectedCategory === 'all'
-                    ? 'bg-[#1b3823] text-white shadow-sm'
-                    : 'bg-[#f4ede1]/60 text-[#3e4a40] hover:bg-[#eee6d6]'
-                }`}
-              >
-                All Products (23)
-              </button>
-              <button
-                onClick={() => setSelectedCategory('snacks')}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                  selectedCategory === 'snacks'
-                    ? 'bg-[#1b3823] text-white shadow-sm'
-                    : 'bg-[#f4ede1]/60 text-[#3e4a40] hover:bg-[#eee6d6]'
-                }`}
-              >
-                Millet Snacks (20)
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedCategory('spices');
-                  setSelectedFlavor('all');
-                  setSelectedSnackType('all');
-                }}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                  selectedCategory === 'spices'
-                    ? 'bg-[#c44f2c] text-white shadow-sm'
-                    : 'bg-[#f4ede1]/60 text-[#3e4a40] hover:bg-[#eee6d6]'
-                }`}
-              >
-                Low RPM Spices (3)
-              </button>
-            </div>
+        {/* Filter & Search Bar */}
+        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-amber-200/70 shadow-md mb-8 space-y-4">
+          {/* Main Category Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {CATEGORY_TABS.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    if (tab.id === 'spices') setSelectedFlavor('all');
+                  }}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 ${
+                    isActive
+                      ? 'bg-[#164A40] text-white shadow-md'
+                      : 'bg-[#FAF6EF] text-[#374151] hover:bg-amber-100/60'
+                  }`}
+                >
+                  <span>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-black/5 text-[#6B7280]'
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-            {/* Instant Search Bar */}
-            <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 text-[#8a998c] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          {/* Sub-Filters: Flavors + Search */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-amber-100">
+            {/* Flavor Pills (for snacks) */}
+            {activeTab !== 'spices' ? (
+              <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+                <span className="text-xs font-bold text-[#6B7280] mr-1 hidden sm:inline">
+                  Flavors:
+                </span>
+                {FLAVORS.map((flavor) => (
+                  <button
+                    key={flavor.id}
+                    onClick={() => setSelectedFlavor(flavor.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                      selectedFlavor === flavor.id
+                        ? 'bg-amber-500 text-white shadow-xs'
+                        : 'bg-white border border-amber-200/80 text-[#374151] hover:bg-amber-50'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${flavor.dot}`} />
+                    <span>{flavor.label}</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-xs font-bold text-amber-800 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200">
+                ⚙️ Slow Stone-Style Ground at Low RPM (Essential Oils Retained)
+              </div>
+            )}
+
+            {/* Search Input */}
+            <div className="relative w-full sm:w-64 flex-shrink-0">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
               <input
                 type="text"
-                placeholder="Search Chakli, Haldi, Peri Peri..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-8 py-2 rounded-full border border-[#eee6d6] text-xs sm:text-sm text-[#142a1a] focus:outline-none focus:border-[#1b3823] focus:ring-1 focus:ring-[#1b3823] bg-[#faf7f0]/50 placeholder:text-[#8a998c]"
+                placeholder="Search snacks, spices..."
+                className="w-full pl-9 pr-8 py-2 rounded-full text-xs bg-[#FAF6EF] border border-amber-200/80 focus:bg-white focus:border-[#164A40] focus:outline-none transition-colors text-[#0E2118]"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -144,86 +274,24 @@ export default function ProductCatalog() {
             </div>
           </div>
 
-          {/* Sub-Filters for Snacks: Flavors & Shapes (only show when not in Spices) */}
-          {selectedCategory !== 'spices' && (
-            <div className="space-y-3 pt-1">
-              {/* Flavor Selector */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold text-[#627065] mr-1 flex items-center gap-1">
-                  <SlidersHorizontal className="w-3 h-3 text-[#a77826]" />
-                  Flavor:
-                </span>
-                {[
-                  { key: 'all', label: 'All Flavors' },
-                  { key: 'classic', label: 'Classic Authentic' },
-                  { key: 'tomato', label: 'Tomato Tangy' },
-                  { key: 'masala', label: 'Desi Masala' },
-                  { key: 'periperi', label: 'Peri Peri Hot' },
-                ].map((item) => (
-                  <button
-                    key={item.key}
-                    onClick={() => setSelectedFlavor(item.key)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      selectedFlavor === item.key
-                        ? 'bg-[#254d2e] text-white shadow-xs'
-                        : 'bg-white border border-[#eee6d6] text-[#516154] hover:bg-[#f8f4eb]'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Snack Shapes / Format */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold text-[#627065] mr-1">Snack Type:</span>
-                {[
-                  { key: 'all', label: 'All Types' },
-                  { key: 'chakli', label: 'Chakli Spirals' },
-                  { key: 'sticks', label: 'Crunchy Sticks' },
-                  { key: 'chips', label: 'Wafer Chips' },
-                  { key: 'mixture', label: 'Namkeen Mixture' },
-                  { key: 'bhujiya', label: 'Delicate Bhujiya' },
-                ].map((item) => (
-                  <button
-                    key={item.key}
-                    onClick={() => setSelectedSnackType(item.key)}
-                    className={`px-3 py-1 rounded-md text-[11px] font-medium transition-all ${
-                      selectedSnackType === item.key
-                        ? 'bg-[#a77826] text-white'
-                        : 'bg-white border border-[#eee6d6] text-[#627065] hover:bg-[#f4ede1]'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Active Filter Summary Bar */}
-          <div className="flex items-center justify-between text-xs text-[#627065] pt-2 border-t border-[#eee6d6]/60">
-            <span>
-              Showing{' '}
-              <strong className="text-[#1b3823] font-bold">
-                {filteredProducts.length}
-              </strong>{' '}
-              products
-            </span>
-
-            {hasActiveFilters && (
+          {/* Active filter count and reset */}
+          {hasActiveFilters && (
+            <div className="flex items-center justify-between text-xs pt-2 text-[#4B5563] border-t border-amber-100/60">
+              <span>
+                Showing <strong>{filteredProducts.length}</strong> matching products
+              </span>
               <button
                 onClick={resetFilters}
-                className="inline-flex items-center gap-1 text-[#c44f2c] hover:underline font-semibold"
+                className="text-[#C2410C] font-bold hover:underline inline-flex items-center gap-1"
               >
-                <X className="w-3.5 h-3.5" />
-                Reset all filters
+                <X className="w-3 h-3" />
+                Reset All Filters
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* Product Grid */}
+        {/* Product Cards Grid */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
@@ -235,25 +303,29 @@ export default function ProductCatalog() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white rounded-3xl border border-[#eee6d6] p-8 max-w-md mx-auto space-y-4">
-            <p className="text-base text-[#627065]">
-              No products found matching your search or filter criteria.
+          <div className="text-center py-16 bg-white rounded-3xl border border-amber-200/60 p-8 space-y-4">
+            <div className="text-4xl">🔍</div>
+            <h3 className="font-serif text-xl font-bold text-[#0E2118]">
+              No matching products found
+            </h3>
+            <p className="text-xs text-[#6B7280] max-w-md mx-auto">
+              We couldn&apos;t find any item matching your criteria. Try resetting filters or searching for something else like &quot;chakli&quot; or &quot;mirchi&quot;.
             </p>
             <button
               onClick={resetFilters}
-              className="px-6 py-2.5 rounded-full bg-[#1b3823] text-white text-xs font-semibold hover:bg-[#254d2e] transition-colors"
+              className="px-5 py-2 rounded-full bg-[#164A40] text-white font-bold text-xs"
             >
               Reset Filters
             </button>
           </div>
         )}
-      </div>
 
-      {/* Detail & Nutrition Modal */}
-      <ProductDetailModal
-        product={activeProduct}
-        onClose={() => setActiveProduct(null)}
-      />
+        {/* Product Details Modal */}
+        <ProductDetailModal
+          product={activeProduct}
+          onClose={() => setActiveProduct(null)}
+        />
+      </div>
     </section>
   );
 }

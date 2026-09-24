@@ -1,30 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  webpack: (config, { dev }) => {
-    if (dev) {
-      config.watchOptions = {
-        ...config.watchOptions,
-        ignored: [
-          ...(Array.isArray(config.watchOptions?.ignored)
-            ? config.watchOptions.ignored
-            : config.watchOptions?.ignored
-            ? [config.watchOptions.ignored]
-            : []),
-          '**/DumpStack.log.tmp',
-          '**/pagefile.sys',
-          '**/swapfile.sys',
-          '**/hiberfil.sys',
-          '**/System Volume Information/**',
-          /[\\/]DumpStack\.log\.tmp$/,
-          /[\\/]pagefile\.sys$/,
-          /[\\/]swapfile\.sys$/,
-        ],
-      };
-    }
-    return config;
-  },
+  // Explicitly opt into Turbopack (default in Next.js 16) with no custom config.
+  // This silences the "webpack config with no turbopack config" error.
+  turbopack: {},
 };
 
 export default nextConfig;
+
 
