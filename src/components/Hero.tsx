@@ -105,6 +105,7 @@ export default function Hero() {
                   sizes="(max-width: 768px) 100vw, 500px"
                   className="object-cover transition-transform duration-500 hover:scale-105"
                   priority
+                  loading="eager"
                 />
                 <div className="absolute top-3 left-3 bg-[#1b3823] text-[#fdfbf7] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
                   Signature Snack
@@ -144,6 +145,7 @@ export default function Hero() {
                     fill
                     sizes="72px"
                     className="object-cover"
+                    loading="eager"
                   />
                 </div>
                 <div className="min-w-0">
