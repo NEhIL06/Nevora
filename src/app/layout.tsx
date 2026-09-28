@@ -3,26 +3,22 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.nevorafoods.in'),
-  title: 'NEVORA | New Era of Everyday Food - Wholesome Millet Snacks & Pure Spices',
+  title: 'NEVORA | Ragi Chakli Made for Better Snacking',
   description:
-    'Discover Nevora: 100% millet snacks made without maida or palm oil, and authentic low-RPM slow ground spices. Pure, authentic, traditional goodness for everyday life.',
+    'Bold, crunchy Ragi Chakli made without maida, palm oil, or preservatives. Meet the better everyday snack from Nevora.',
   keywords: [
     'Nevora',
-    'Millet Snacks',
+    'Ragi Chakli',
     'Ragi Chakli',
     'Ragi Chips',
     'No Palm Oil Snacks',
     'No Maida Snacks',
-    'Low RPM Grinded Spices',
-    'Kutta Mirchi',
-    'Kutta Haldi',
-    'Kutta Dhaniya',
     'Healthy Indian Snacks',
   ],
   openGraph: {
-    title: 'NEVORA | New Era of Everyday Food',
+    title: 'NEVORA | Snack Like You Mean It',
     description:
-      'Wholesome millet snacks and traditional low-RPM ground spices. Pure ingredients, zero preservatives, 100% goodness.',
+      'Wholesome Ragi Chakli with the bold flavour and crunch you actually crave.',
     images: ['/images/logo.jpeg'],
   },
   icons: {
@@ -56,4 +52,3 @@ export default function RootLayout({
     </html>
   );
 }
-
