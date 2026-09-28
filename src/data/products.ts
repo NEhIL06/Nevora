@@ -144,7 +144,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Classic Authentic',
     subtitle: 'Crisp Millet Spiral Crunch',
     weight: '130 g',
-    image: '/images/snacks/chakli-classic.jpg',
+    image: '/images/product-photography/chakli-classic.png',
     badge: 'Bestseller',
     description:
       'Traditional spiral chakli reimagined with nutrient-packed Ragi (Finger Millet). Crunchy, lightly seasoned with curry leaves and cold-pressed spices.',
@@ -229,7 +229,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Tomato Tangy',
     subtitle: 'Tangy Sun-Ripened Tomato Twist',
     weight: '130 g',
-    image: '/images/snacks/chakli-tomato.jpg',
+    image: '/images/product-photography/chakli-tomato-tangy.png',
     badge: 'Tangy Kick',
     description:
       'Crispy spirals infused with the mouth-watering zest of ripe tomatoes, subtle red chilli, and aromatic curry leaf powder.',
@@ -246,7 +246,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Tomato Tangy',
     subtitle: 'Zesty Finger Crunch',
     weight: '100 g',
-    image: '/images/snacks/sticks-tomato.jpg',
+    image: '/images/product-photography/sticks-tomato-tangy.png',
     description:
       'Savoury finger sticks tossed in a zesty sweet-tangy tomato glaze. The snack kids and adults both fall in love with.',
     highlights: [...SNACK_HIGHLIGHTS, 'Sweet & Tangy'],
@@ -313,7 +313,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Desi Masala',
     subtitle: 'Bold Indian Spice Spirals',
     weight: '130 g',
-    image: '/images/snacks/chakli-masala.jpg',
+    image: '/images/product-photography/chakli-desi-masala.png',
     badge: 'Desi Flavour',
     description:
       'Tossed in an authentic blend of roasted cumin, star anise, cloves, and black pepper. Deeply comforting home-cooked Indian flavours.',
@@ -363,7 +363,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Desi Masala',
     subtitle: 'Classic Royal Indian Namkeen',
     weight: '100 g',
-    image: '/images/snacks/mixture-masala.jpg',
+    image: '/images/product-photography/mixture-desi-masala.png',
     description:
       'A festive medley of spiced ragi noodles, golden roasted peanuts, and fragrant curry leaves in a secret spice blend.',
     highlights: [...SNACK_HIGHLIGHTS, 'Festive Classic'],
@@ -397,7 +397,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Peri Peri',
     subtitle: 'Fiery African Birdseye Twist',
     weight: '130 g',
-    image: '/images/snacks/chakli-periperi.jpg',
+    image: '/images/product-photography/chakli-peri-peri.png',
     badge: 'Spicy & Hot',
     description:
       'Crispy spirals infused with spicy, zesty Peri Peri chilli, garlic, and herbs. Irresistibly zesty crunch with a warm lingering heat.',
@@ -431,7 +431,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Peri Peri',
     subtitle: 'Spicy Millet Chips',
     weight: '100 g',
-    image: '/images/snacks/chips-periperi.jpg',
+    image: '/images/product-photography/chips-peri-peri.png',
     badge: 'Party Hit',
     description:
       'Thin, crispy ragi wafers smothered in zesty peri peri spices. The ultimate clean cheat-snack for movie nights.',
@@ -448,7 +448,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Peri Peri',
     subtitle: 'Fiery Gourmet Mixture',
     weight: '100 g',
-    image: '/images/snacks/mixture-periperi.jpg',
+    image: '/images/product-photography/mixture-peri-peri.png',
     description:
       'A modern global fusion: traditional millet namkeen tossed in hot and tangy peri peri spices with toasted peanuts.',
     highlights: [...SNACK_HIGHLIGHTS, 'Global Fusion'],
@@ -464,7 +464,7 @@ export const PRODUCTS: Product[] = [
     flavorName: 'Peri Peri',
     subtitle: 'Fine Fire-Kissed Bhujiya',
     weight: '130 g',
-    image: '/images/snacks/bhujiya-periperi.jpg',
+    image: '/images/product-photography/bhujiya-peri-peri.png',
     badge: 'Hot Pick',
     description:
       'Spicy, smoky, and dangerously addictive. Fine ragi bhujiya strands kissed with aromatic peri peri notes.',
